@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public ClientesController(AppDBContext context)
+        public CustomersController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Clientes
+        // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCliente()
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
         {
-            return await _context.Clientes.ToListAsync();
+            return await _context.Customers.ToListAsync();
         }
 
-        // GET: api/Clientes/5
+        // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCliente(int id)
+        public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
 
-            if (cliente == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return cliente;
+            return customer;
         }
 
-        // PUT: api/Clientes/5
+        // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Customer cliente)
+        public async Task<IActionResult> PutCustomer(int id, Customer customer)
         {
-            if (id != cliente.ClienteId)
+            if (id != customer.CustomerId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(cliente).State = EntityState.Modified;
+            _context.Entry(customer).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClienteExists(id))
+                if (!CustomerExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Clientes
+        // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCliente(Customer cliente)
+        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            _context.Clientes.Add(cliente);
+            _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCliente", new { id = cliente.ClienteId }, cliente);
+            return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
         }
 
-        // DELETE: api/Clientes/5
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCliente(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Clientes.Remove(cliente);
+            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ClienteExists(int id)
+        private bool CustomerExists(int id)
         {
-            return _context.Clientes.Any(e => e.ClienteId == id);
+            return _context.Customers.Any(e => e.CustomerId == id);
         }
     }
 }

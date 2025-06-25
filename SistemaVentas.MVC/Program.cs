@@ -1,5 +1,7 @@
 using SistemaVentas.APIConsumer;
 using SistemaVentas.Model;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SistemaVentas.MVC
 {
@@ -8,14 +10,18 @@ namespace SistemaVentas.MVC
         public static void Main(string[] args)
         {
 
-            Crud<Seat>.EndPoint = "https://localhost:7269/api/Asientos";
-            Crud<Boleto>.EndPoint = "https://localhost:7269/api/Boletos";
-            Crud<Categoria>.EndPoint = "https://localhost:7269/api/Categorias";
-            Crud<Customer>.EndPoint = "https://localhost:7269/api/Clientes";
-            Crud<Model.Route>.EndPoint = "https://localhost:7269/api/Rutas";
+            Crud<Seat>.EndPoint = "https://localhost:7269/api/Seats";
+            Crud<Ticket>.EndPoint = "https://localhost:7269/api/Tickets";
+            Crud<Category>.EndPoint = "https://localhost:7269/api/Categories";
+            Crud<Customer>.EndPoint = "https://localhost:7269/api/Customers";
+            Crud<Model.Route>.EndPoint = "https://localhost:7269/api/Routes";
 
 
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<SistemaVentasDBContext>(options =>
+
+                options.UseNpgsql(builder.Configuration.GetConnectionString("SistemaVentasDBContext") ?? throw new InvalidOperationException("Connection string 'SistemaVentasDBContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

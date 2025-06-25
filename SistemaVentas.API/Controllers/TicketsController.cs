@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RutasController : ControllerBase
+    public class TicketsController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public RutasController(AppDBContext context)
+        public TicketsController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Rutas
+        // GET: api/Tickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Model.Route>>> GetRuta()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicket()
         {
-            return await _context.Rutas.ToListAsync();
+            return await _context.Tickets.ToListAsync();
         }
 
-        // GET: api/Rutas/5
+        // GET: api/Tickets/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Model.Route>> GetRuta(int id)
+        public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
-            var ruta = await _context.Rutas.FindAsync(id);
+            var ticket = await _context.Tickets.FindAsync(id);
 
-            if (ruta == null)
+            if (ticket == null)
             {
                 return NotFound();
             }
 
-            return ruta;
+            return ticket;
         }
 
-        // PUT: api/Rutas/5
+        // PUT: api/Tickets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRuta(int id, Model.Route ruta)
+        public async Task<IActionResult> PutTicket(int id, Ticket ticket)
         {
-            if (id != ruta.RutaId)
+            if (id != ticket.TicketId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(ruta).State = EntityState.Modified;
+            _context.Entry(ticket).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RutaExists(id))
+                if (!TicketExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Rutas
+        // POST: api/Tickets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Model.Route>> PostRuta(Model.Route ruta)
+        public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
         {
-            _context.Rutas.Add(ruta);
+            _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRuta", new { id = ruta.RutaId }, ruta);
+            return CreatedAtAction("GetTicket", new { id = ticket.TicketId }, ticket);
         }
 
-        // DELETE: api/Rutas/5
+        // DELETE: api/Tickets/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRuta(int id)
+        public async Task<IActionResult> DeleteTicket(int id)
         {
-            var ruta = await _context.Rutas.FindAsync(id);
-            if (ruta == null)
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
             {
                 return NotFound();
             }
 
-            _context.Rutas.Remove(ruta);
+            _context.Tickets.Remove(ticket);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RutaExists(int id)
+        private bool TicketExists(int id)
         {
-            return _context.Rutas.Any(e => e.RutaId == id);
+            return _context.Tickets.Any(e => e.TicketId == id);
         }
     }
 }

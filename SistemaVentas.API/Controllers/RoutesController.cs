@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoletosController : ControllerBase
+    public class RoutesController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public BoletosController(AppDBContext context)
+        public RoutesController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Boletos
+        // GET: api/Routes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Boleto>>> GetBoleto()
+        public async Task<ActionResult<IEnumerable<Model.Route>>> GetRoute()
         {
-            return await _context.Boletos.ToListAsync();
+            return await _context.Routes.ToListAsync();
         }
 
-        // GET: api/Boletos/5
+        // GET: api/Routes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Boleto>> GetBoleto(int id)
+        public async Task<ActionResult<Model.Route>> GetRoute(int id)
         {
-            var boleto = await _context.Boletos.FindAsync(id);
+            var route = await _context.Routes.FindAsync(id);
 
-            if (boleto == null)
+            if (route == null)
             {
                 return NotFound();
             }
 
-            return boleto;
+            return route;
         }
 
-        // PUT: api/Boletos/5
+        // PUT: api/Routes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBoleto(int id, Boleto boleto)
+        public async Task<IActionResult> PutRoute(int id, Model.Route route)
         {
-            if (id != boleto.BoletoId)
+            if (id != route.RouteId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(boleto).State = EntityState.Modified;
+            _context.Entry(route).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BoletoExists(id))
+                if (!RouteExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Boletos
+        // POST: api/Routes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Boleto>> PostBoleto(Boleto boleto)
+        public async Task<ActionResult<Model.Route>> PostRoute(Model.Route route)
         {
-            _context.Boletos.Add(boleto);
+            _context.Routes.Add(route);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBoleto", new { id = boleto.BoletoId }, boleto);
+            return CreatedAtAction("GetRoute", new { id = route.RouteId }, route);
         }
 
-        // DELETE: api/Boletos/5
+        // DELETE: api/Routes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBoleto(int id)
+        public async Task<IActionResult> DeleteRoute(int id)
         {
-            var boleto = await _context.Boletos.FindAsync(id);
-            if (boleto == null)
+            var route = await _context.Routes.FindAsync(id);
+            if (route == null)
             {
                 return NotFound();
             }
 
-            _context.Boletos.Remove(boleto);
+            _context.Routes.Remove(route);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool BoletoExists(int id)
+        private bool RouteExists(int id)
         {
-            return _context.Boletos.Any(e => e.BoletoId == id);
+            return _context.Routes.Any(e => e.RouteId == id);
         }
     }
 }

@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriasController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public CategoriasController(AppDBContext context)
+        public CategoriesController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Categorias
+        // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoria()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            return await _context.Categorias.ToListAsync();
+            return await _context.Categories.ToListAsync();
         }
 
-        // GET: api/Categorias/5
+        // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Categoria>> GetCategoria(int id)
+        public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            var categoria = await _context.Categorias.FindAsync(id);
+            var category = await _context.Categories.FindAsync(id);
 
-            if (categoria == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return categoria;
+            return category;
         }
 
-        // PUT: api/Categorias/5
+        // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
+        public async Task<IActionResult> PutCategory(int id, Category category)
         {
-            if (id != categoria.CategoriaId)
+            if (id != category.CategoryId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(categoria).State = EntityState.Modified;
+            _context.Entry(category).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoriaExists(id))
+                if (!CategoryExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Categorias
+        // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
+        public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-            _context.Categorias.Add(categoria);
+            _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategoria", new { id = categoria.CategoriaId }, categoria);
+            return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
         }
 
-        // DELETE: api/Categorias/5
+        // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoria(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
-            var categoria = await _context.Categorias.FindAsync(id);
-            if (categoria == null)
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            _context.Categorias.Remove(categoria);
+            _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CategoriaExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Categorias.Any(e => e.CategoriaId == id);
+            return _context.Categories.Any(e => e.CategoryId == id);
         }
     }
 }

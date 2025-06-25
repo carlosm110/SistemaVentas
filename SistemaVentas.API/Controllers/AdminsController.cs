@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AsientosController : ControllerBase
+    public class AdminsController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public AsientosController(AppDBContext context)
+        public AdminsController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Asientos
+        // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Seat>>> GetAsiento()
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmin()
         {
-            return await _context.Asientos.ToListAsync();
+            return await _context.Admins.ToListAsync();
         }
 
-        // GET: api/Asientos/5
+        // GET: api/Admins/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Seat>> GetAsiento(int id)
+        public async Task<ActionResult<Admin>> GetAdmin(int id)
         {
-            var asiento = await _context.Asientos.FindAsync(id);
+            var admin = await _context.Admins.FindAsync(id);
 
-            if (asiento == null)
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            return asiento;
+            return admin;
         }
 
-        // PUT: api/Asientos/5
+        // PUT: api/Admins/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsiento(int id, Seat asiento)
+        public async Task<IActionResult> PutAdmin(int id, Admin admin)
         {
-            if (id != asiento.AsientoId)
+            if (id != admin.AdminId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(asiento).State = EntityState.Modified;
+            _context.Entry(admin).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AsientoExists(id))
+                if (!AdminExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Asientos
+        // POST: api/Admins
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Seat>> PostAsiento(Seat asiento)
+        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
         {
-            _context.Asientos.Add(asiento);
+            _context.Admins.Add(admin);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAsiento", new { id = asiento.AsientoId }, asiento);
+            return CreatedAtAction("GetAdmin", new { id = admin.AdminId }, admin);
         }
 
-        // DELETE: api/Asientos/5
+        // DELETE: api/Admins/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsiento(int id)
+        public async Task<IActionResult> DeleteAdmin(int id)
         {
-            var asiento = await _context.Asientos.FindAsync(id);
-            if (asiento == null)
+            var admin = await _context.Admins.FindAsync(id);
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            _context.Asientos.Remove(asiento);
+            _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool AsientoExists(int id)
+        private bool AdminExists(int id)
         {
-            return _context.Asientos.Any(e => e.AsientoId == id);
+            return _context.Admins.Any(e => e.AdminId == id);
         }
     }
 }

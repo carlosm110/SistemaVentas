@@ -1,7 +1,7 @@
-﻿using Flotas.Models;
+﻿using SistemaVentas.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using GestionFlota.API.Consumer;
+using SistemaVentas.APIConsumer;
 
 namespace GestionMantenimientoFlotas.MVC.Controllers
 {
@@ -19,7 +19,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
         public IActionResult Login(string username, string password)
         {
             var admins = Crud<Admin>.GetAll();  // Obtener todos los administradores desde la API o base de datos
-            var admin = admins.FirstOrDefault(a => a.Username == username && a.Password == password);  // Verificar si el admin existe
+            var admin = admins.FirstOrDefault(a => a.Email == username && a.Password == password);  // Verificar si el admin existe
 
             if (admin != null)
             {
