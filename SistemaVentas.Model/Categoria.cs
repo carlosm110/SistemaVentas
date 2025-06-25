@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace SistemaVentas.Model
 {
-    public class Categoria
+    public class Category
     {
         [Key]
-        public int CategoriaId { get; set; }
+        public int CategoryId { get; set; }
 
         [Required]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
 
-        public List<Boleto>? Boletos { get; set; }
+        public List<Ticket>? Tickets { get; set; }
     }
 }

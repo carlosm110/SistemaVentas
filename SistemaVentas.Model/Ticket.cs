@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaVentas.Model
 {
-    public class Boleto
+    public class Ticket
     {
         [Key]
-        public int BoletoId { get; set; }
+        public int TicketId { get; set; }
 
         [Required]
-        public double Precio { get; set; }
+        public double Price { get; set; }
 
-        [ForeignKey("AsientoId")]
+        [ForeignKey("SeatId")]
         public int AsientoId { get; set; }
 
         [ForeignKey("ClienteId")]
