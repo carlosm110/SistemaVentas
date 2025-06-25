@@ -10,24 +10,25 @@ namespace SistemaVentas.Model
 
         [Required]
         public double Price { get; set; }
+        public bool Delivered { get; set; } = false;
 
         [ForeignKey("SeatId")]
-        public int AsientoId { get; set; }
+        public int SeatId { get; set; }
 
-        [ForeignKey("ClienteId")]
-        public int ClienteId { get; set; }
+        [ForeignKey("CustomerId")]
+        public int CustomerId { get; set; }
 
-        [ForeignKey("CategoriaId")]
-        public int CategoriaId { get; set; }
+        [ForeignKey("CategoryId")]
+        public int CategoryId { get; set; }
 
-        [ForeignKey("RutaId")]
-        public int RutaId { get; set; }
+        [ForeignKey("RouteId")]
+        public int RouteId { get; set; }
 
-        public Ruta? Ruta { get; set; }
-        public Categoria? Categoria { get; set; }
+        public Route? Route{ get; set; }
+        public Category? Category { get; set; }
        
-        public Asiento? Asiento { get; set; }
-        public Cliente? Cliente { get; set; }
+        public Seat? Seat { get; set; }
+        public Customer? Customer { get; set; }
         
     }
 }

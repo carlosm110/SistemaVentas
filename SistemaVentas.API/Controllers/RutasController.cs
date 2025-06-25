@@ -22,14 +22,14 @@ namespace SistemaVentas.API.Controllers
 
         // GET: api/Rutas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ruta>>> GetRuta()
+        public async Task<ActionResult<IEnumerable<Model.Route>>> GetRuta()
         {
             return await _context.Rutas.ToListAsync();
         }
 
         // GET: api/Rutas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ruta>> GetRuta(int id)
+        public async Task<ActionResult<Model.Route>> GetRuta(int id)
         {
             var ruta = await _context.Rutas.FindAsync(id);
 
@@ -44,7 +44,7 @@ namespace SistemaVentas.API.Controllers
         // PUT: api/Rutas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRuta(int id, Ruta ruta)
+        public async Task<IActionResult> PutRuta(int id, Model.Route ruta)
         {
             if (id != ruta.RutaId)
             {
@@ -75,7 +75,7 @@ namespace SistemaVentas.API.Controllers
         // POST: api/Rutas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Ruta>> PostRuta(Ruta ruta)
+        public async Task<ActionResult<Model.Route>> PostRuta(Model.Route ruta)
         {
             _context.Rutas.Add(ruta);
             await _context.SaveChangesAsync();

@@ -12,13 +12,13 @@ using SistemaVentas.Model;
         {
         }
 
-        public DbSet<SistemaVentas.Model.Asiento> Asientos { get; set; } = default!;
+        public DbSet<SistemaVentas.Model.Seat> Asientos { get; set; } = default!;
 
 public DbSet<SistemaVentas.Model.Boleto> Boletos { get; set; } = default!;
 
 public DbSet<SistemaVentas.Model.Categoria> Categorias { get; set; } = default!;
 
-public DbSet<SistemaVentas.Model.Cliente> Clientes { get; set; } = default!;
+public DbSet<SistemaVentas.Model.Customer> Clientes { get; set; } = default!;
 
-public DbSet<SistemaVentas.Model.Ruta> Rutas { get; set; } = default!;
+public DbSet<SistemaVentas.Model.Route> Rutas { get; set; } = default!;
     }

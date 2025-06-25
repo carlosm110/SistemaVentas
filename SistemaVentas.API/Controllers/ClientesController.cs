@@ -22,14 +22,14 @@ namespace SistemaVentas.API.Controllers
 
         // GET: api/Clientes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCliente()
         {
             return await _context.Clientes.ToListAsync();
         }
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(int id)
+        public async Task<ActionResult<Customer>> GetCliente(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
 
@@ -44,7 +44,7 @@ namespace SistemaVentas.API.Controllers
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Cliente cliente)
+        public async Task<IActionResult> PutCliente(int id, Customer cliente)
         {
             if (id != cliente.ClienteId)
             {
@@ -75,7 +75,7 @@ namespace SistemaVentas.API.Controllers
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public async Task<ActionResult<Customer>> PostCliente(Customer cliente)
         {
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();

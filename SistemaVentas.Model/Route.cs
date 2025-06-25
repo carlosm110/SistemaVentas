@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace SistemaVentas.Model
 {
-    public class Ruta
+    public class Route
     {
         [Key]
-        public int RutaId { get; set; }
+        public int RouteId { get; set; }
 
         [Required]
-        public string NombreRuta { get; set; }
+        public string NameRoute { get; set; }
 
-        public List<Boleto>? Boletos { get; set; }
+        public List<Ticket>? Tickets { get; set; }
     }
 }

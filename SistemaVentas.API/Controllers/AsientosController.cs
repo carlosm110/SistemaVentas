@@ -22,14 +22,14 @@ namespace SistemaVentas.API.Controllers
 
         // GET: api/Asientos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Asiento>>> GetAsiento()
+        public async Task<ActionResult<IEnumerable<Seat>>> GetAsiento()
         {
             return await _context.Asientos.ToListAsync();
         }
 
         // GET: api/Asientos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Asiento>> GetAsiento(int id)
+        public async Task<ActionResult<Seat>> GetAsiento(int id)
         {
             var asiento = await _context.Asientos.FindAsync(id);
 
@@ -44,7 +44,7 @@ namespace SistemaVentas.API.Controllers
         // PUT: api/Asientos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsiento(int id, Asiento asiento)
+        public async Task<IActionResult> PutAsiento(int id, Seat asiento)
         {
             if (id != asiento.AsientoId)
             {
@@ -75,7 +75,7 @@ namespace SistemaVentas.API.Controllers
         // POST: api/Asientos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Asiento>> PostAsiento(Asiento asiento)
+        public async Task<ActionResult<Seat>> PostAsiento(Seat asiento)
         {
             _context.Asientos.Add(asiento);
             await _context.SaveChangesAsync();

@@ -8,11 +8,11 @@ namespace SistemaVentas.MVC
         public static void Main(string[] args)
         {
 
-            Crud<Asiento>.EndPoint = "https://localhost:7269/api/Asientos";
+            Crud<Seat>.EndPoint = "https://localhost:7269/api/Asientos";
             Crud<Boleto>.EndPoint = "https://localhost:7269/api/Boletos";
             Crud<Categoria>.EndPoint = "https://localhost:7269/api/Categorias";
-            Crud<Cliente>.EndPoint = "https://localhost:7269/api/Clientes";
-            Crud<Ruta>.EndPoint = "https://localhost:7269/api/Rutas";
+            Crud<Customer>.EndPoint = "https://localhost:7269/api/Clientes";
+            Crud<Model.Route>.EndPoint = "https://localhost:7269/api/Rutas";
 
 
             var builder = WebApplication.CreateBuilder(args);
