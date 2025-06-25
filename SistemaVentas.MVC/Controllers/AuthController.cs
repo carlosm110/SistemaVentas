@@ -13,25 +13,67 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
             return View();
         }
 
-        // POST: Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Login(string username, string password)
         {
-            var admins = Crud<Client>.GetAll();  // Obtener todos los administradores desde la API o base de datos
-            var admin = admins.FirstOrDefault(a => a.Email == username && a.Password == password);  // Verificar si el admin existe
+            var users = Crud<Client>.GetAll();
+            var user = users.FirstOrDefault(u => u.Email == username && u.Password == password);
 
-            if (admin != null)
+            if (user != null)
             {
-                // Guardar en la sesión si el login es exitoso
+                // GUARDAR LA SESIÓN
                 HttpContext.Session.SetString("User", username);
-                return RedirectToAction("Index", "Home");  // Redirigir a la página principal
+                HttpContext.Session.SetString("IsAdmin", user.IsAdmin ? "True" : "False"); //<-- CORRECTO AQUÍ
+
+                return RedirectToAction("Index", "Home");
             }
             else
             {
                 ModelState.AddModelError("", "Username or password is incorrect");
-                return View();  // Volver a la vista de login si hay un error
+                return View();
             }
+        }
+        // GET: Register
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        // POST: Register
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Register(Client newUser)
+        {
+            if (ModelState.IsValid)
+            {
+                // Verificar si el correo ya está registrado
+                var users = Crud<Client>.GetAll();
+                if (users.Any(u => u.Email == newUser.Email))
+                {
+                    ModelState.AddModelError("", "El correo electrónico ya está registrado.");
+                    return View();
+                }
+
+                // Usar el método Crud para crear un nuevo usuario en la base de datos
+                try
+                {
+                    var createdUser = Crud<Client>.Create(newUser);
+
+                    // Guardar en la sesión para autenticar automáticamente
+                    HttpContext.Session.SetString("User", createdUser.Email);
+                    
+
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error al registrar el usuario: {ex.Message}");
+                    return View();
+                }
+            }
+
+            return View(newUser);
         }
 
         // GET: Logout

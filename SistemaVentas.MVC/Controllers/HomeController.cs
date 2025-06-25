@@ -15,8 +15,21 @@ namespace SistemaVentas.MVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var isAdmin = HttpContext.Session.GetString("IsAdmin");
+
+            // Para verificar que esté entrando correctamente
+            ViewBag.RoleDebug = $"IsAdmin en sesión: {isAdmin}";
+
+            if (isAdmin == "True")
+            {
+                return View("AdminDashboard");
+            }
+            else
+            {
+                return View("ClientDashboard");
+            }
         }
+
 
         public IActionResult Privacy()
         {
