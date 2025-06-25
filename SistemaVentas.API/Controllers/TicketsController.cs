@@ -22,7 +22,7 @@ namespace SistemaVentas.API.Controllers
 
         // GET: api/Tickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicket()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
             return await _context.Tickets.ToListAsync();
         }

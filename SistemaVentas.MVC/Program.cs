@@ -12,9 +12,9 @@ namespace SistemaVentas.MVC
             Crud<Seat>.EndPoint = "https://localhost:7269/api/Seats";
             Crud<Ticket>.EndPoint = "https://localhost:7269/api/Tickets";
             Crud<Category>.EndPoint = "https://localhost:7269/api/Categories";
-            Crud<Customer>.EndPoint = "https://localhost:7269/api/Customers";
             Crud<Model.Route>.EndPoint = "https://localhost:7269/api/Routes";
-            Crud<Admin>.EndPoint = "https://localhost:7269/api/Admins";
+            Crud<Client>.EndPoint = "https://localhost:7269/api/Clients";
+
 
 
             var builder = WebApplication.CreateBuilder(args);

@@ -11,47 +11,47 @@ namespace SistemaVentas.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminsController : ControllerBase
+    public class ClientsController : ControllerBase
     {
         private readonly AppDBContext _context;
 
-        public AdminsController(AppDBContext context)
+        public ClientsController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: api/Admins
+        // GET: api/Clients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmin()
+        public async Task<ActionResult<IEnumerable<Client>>> GetClient()
         {
-            return await _context.Admins.ToListAsync();
+            return await _context.Client.ToListAsync();
         }
 
-        // GET: api/Admins/5
+        // GET: api/Clients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> GetAdmin(int id)
+        public async Task<ActionResult<Client>> GetClient(int id)
         {
-            var admin = await _context.Admins.FindAsync(id);
+            var client = await _context.Client.FindAsync(id);
 
-            if (admin == null)
+            if (client == null)
             {
                 return NotFound();
             }
 
-            return admin;
+            return client;
         }
 
-        // PUT: api/Admins/5
+        // PUT: api/Clients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdmin(int id, Admin admin)
+        public async Task<IActionResult> PutClient(int id, Client client)
         {
-            if (id != admin.AdminId)
+            if (id != client.ClientId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(admin).State = EntityState.Modified;
+            _context.Entry(client).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +59,7 @@ namespace SistemaVentas.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AdminExists(id))
+                if (!ClientExists(id))
                 {
                     return NotFound();
                 }
@@ -72,36 +72,36 @@ namespace SistemaVentas.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Admins
+        // POST: api/Clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
+        public async Task<ActionResult<Client>> PostClient(Client client)
         {
-            _context.Admins.Add(admin);
+            _context.Client.Add(client);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAdmin", new { id = admin.AdminId }, admin);
+            return CreatedAtAction("GetClient", new { id = client.ClientId }, client);
         }
 
-        // DELETE: api/Admins/5
+        // DELETE: api/Clients/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAdmin(int id)
+        public async Task<IActionResult> DeleteClient(int id)
         {
-            var admin = await _context.Admins.FindAsync(id);
-            if (admin == null)
+            var client = await _context.Client.FindAsync(id);
+            if (client == null)
             {
                 return NotFound();
             }
 
-            _context.Admins.Remove(admin);
+            _context.Client.Remove(client);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool AdminExists(int id)
+        private bool ClientExists(int id)
         {
-            return _context.Admins.Any(e => e.AdminId == id);
+            return _context.Client.Any(e => e.ClientId == id);
         }
     }
 }

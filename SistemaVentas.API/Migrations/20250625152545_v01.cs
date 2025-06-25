@@ -12,21 +12,6 @@ namespace SistemaVentas.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Admins",
-                columns: table => new
-                {
-                    AdminId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Admins", x => x.AdminId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -40,18 +25,19 @@ namespace SistemaVentas.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customers",
+                name: "Client",
                 columns: table => new
                 {
-                    CustomerId = table.Column<int>(type: "integer", nullable: false)
+                    ClientId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
+                    table.PrimaryKey("PK_Client", x => x.ClientId);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,10 +89,10 @@ namespace SistemaVentas.API.Migrations
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tickets_Customers_CustomerId",
+                        name: "FK_Tickets_Client_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerId",
+                        principalTable: "Client",
+                        principalColumn: "ClientId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tickets_Routes_RouteId",
@@ -147,16 +133,13 @@ namespace SistemaVentas.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Admins");
-
-            migrationBuilder.DropTable(
                 name: "Tickets");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Client");
 
             migrationBuilder.DropTable(
                 name: "Routes");

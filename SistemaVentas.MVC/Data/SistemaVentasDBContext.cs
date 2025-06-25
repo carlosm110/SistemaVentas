@@ -12,15 +12,17 @@ using SistemaVentas.Model;
         {
         }
 
-        public DbSet<SistemaVentas.Model.Admin> Admins { get; set; } = default!;
+
 
 public DbSet<SistemaVentas.Model.Category> Categories { get; set; } = default!;
 
-public DbSet<SistemaVentas.Model.Customer> Customers { get; set; } = default!;
+
 
 public DbSet<SistemaVentas.Model.Route> Routes { get; set; } = default!;
 
 public DbSet<SistemaVentas.Model.Seat> Seats { get; set; } = default!;
 
 public DbSet<SistemaVentas.Model.Ticket> Tickets { get; set; } = default!;
+
+public DbSet<SistemaVentas.Model.Client> Client { get; set; } = default!;
     }

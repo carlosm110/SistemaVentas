@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SistemaVentas.API.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250625050413_v01")]
+    [Migration("20250625152545_v01")]
     partial class v01
     {
         /// <inheritdoc />
@@ -22,31 +22,6 @@ namespace SistemaVentas.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("SistemaVentas.Model.Admin", b =>
-                {
-                    b.Property<int>("AdminId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AdminId"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("AdminId");
-
-                    b.ToTable("Admins");
-                });
 
             modelBuilder.Entity("SistemaVentas.Model.Category", b =>
                 {
@@ -65,17 +40,20 @@ namespace SistemaVentas.API.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("SistemaVentas.Model.Customer", b =>
+            modelBuilder.Entity("SistemaVentas.Model.Client", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("ClientId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ClientId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -85,9 +63,9 @@ namespace SistemaVentas.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("CustomerId");
+                    b.HasKey("ClientId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("SistemaVentas.Model.Route", b =>
@@ -171,7 +149,7 @@ namespace SistemaVentas.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SistemaVentas.Model.Customer", "Customer")
+                    b.HasOne("SistemaVentas.Model.Client", "Customer")
                         .WithMany("Tickets")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -203,7 +181,7 @@ namespace SistemaVentas.API.Migrations
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("SistemaVentas.Model.Customer", b =>
+            modelBuilder.Entity("SistemaVentas.Model.Client", b =>
                 {
                     b.Navigation("Tickets");
                 });

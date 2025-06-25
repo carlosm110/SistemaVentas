@@ -9,22 +9,22 @@ using SistemaVentas.Model;
 
 namespace SistemaVentas.MVC.Controllers
 {
-    public class AdminsController : Controller
+    public class ClientsController : Controller
     {
         private readonly SistemaVentasDBContext _context;
 
-        public AdminsController(SistemaVentasDBContext context)
+        public ClientsController(SistemaVentasDBContext context)
         {
             _context = context;
         }
 
-        // GET: Admins
+        // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Admins.ToListAsync());
+            return View(await _context.Client.ToListAsync());
         }
 
-        // GET: Admins/Details/5
+        // GET: Clients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace SistemaVentas.MVC.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admins
-                .FirstOrDefaultAsync(m => m.AdminId == id);
-            if (admin == null)
+            var client = await _context.Client
+                .FirstOrDefaultAsync(m => m.ClientId == id);
+            if (client == null)
             {
                 return NotFound();
             }
 
-            return View(admin);
+            return View(client);
         }
 
-        // GET: Admins/Create
+        // GET: Clients/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admins/Create
+        // POST: Clients/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AdminId,Name,Email,Password")] Admin admin)
+        public async Task<IActionResult> Create([Bind("ClientId,Name,Email,Password,IsAdmin")] Client client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(admin);
+                _context.Add(client);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(admin);
+            return View(client);
         }
 
-        // GET: Admins/Edit/5
+        // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace SistemaVentas.MVC.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admins.FindAsync(id);
-            if (admin == null)
+            var client = await _context.Client.FindAsync(id);
+            if (client == null)
             {
                 return NotFound();
             }
-            return View(admin);
+            return View(client);
         }
 
-        // POST: Admins/Edit/5
+        // POST: Clients/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AdminId,Name,Email,Password")] Admin admin)
+        public async Task<IActionResult> Edit(int id, [Bind("ClientId,Name,Email,Password,IsAdmin")] Client client)
         {
-            if (id != admin.AdminId)
+            if (id != client.ClientId)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace SistemaVentas.MVC.Controllers
             {
                 try
                 {
-                    _context.Update(admin);
+                    _context.Update(client);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AdminExists(admin.AdminId))
+                    if (!ClientExists(client.ClientId))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace SistemaVentas.MVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(admin);
+            return View(client);
         }
 
-        // GET: Admins/Delete/5
+        // GET: Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,34 +123,34 @@ namespace SistemaVentas.MVC.Controllers
                 return NotFound();
             }
 
-            var admin = await _context.Admins
-                .FirstOrDefaultAsync(m => m.AdminId == id);
-            if (admin == null)
+            var client = await _context.Client
+                .FirstOrDefaultAsync(m => m.ClientId == id);
+            if (client == null)
             {
                 return NotFound();
             }
 
-            return View(admin);
+            return View(client);
         }
 
-        // POST: Admins/Delete/5
+        // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var admin = await _context.Admins.FindAsync(id);
-            if (admin != null)
+            var client = await _context.Client.FindAsync(id);
+            if (client != null)
             {
-                _context.Admins.Remove(admin);
+                _context.Client.Remove(client);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AdminExists(int id)
+        private bool ClientExists(int id)
         {
-            return _context.Admins.Any(e => e.AdminId == id);
+            return _context.Client.Any(e => e.ClientId == id);
         }
     }
 }

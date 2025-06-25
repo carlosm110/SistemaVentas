@@ -28,7 +28,7 @@ namespace SistemaVentas.Model
         public Category? Category { get; set; }
        
         public Seat? Seat { get; set; }
-        public Customer? Customer { get; set; }
+        public Client? Customer { get; set; }
         
     }
 }

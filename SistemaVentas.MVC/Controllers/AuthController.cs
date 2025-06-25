@@ -18,7 +18,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(string username, string password)
         {
-            var admins = Crud<Admin>.GetAll();  // Obtener todos los administradores desde la API o base de datos
+            var admins = Crud<Client>.GetAll();  // Obtener todos los administradores desde la API o base de datos
             var admin = admins.FirstOrDefault(a => a.Email == username && a.Password == password);  // Verificar si el admin existe
 
             if (admin != null)
