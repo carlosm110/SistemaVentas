@@ -22,9 +22,10 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
 
             if (user != null)
             {
-                // GUARDAR LA SESIÓN
+                // GUARDAR LA SESIÓN CON EL CustomerId
                 HttpContext.Session.SetString("User", username);
-                HttpContext.Session.SetString("IsAdmin", user.IsAdmin ? "True" : "False"); //<-- CORRECTO AQUÍ
+                HttpContext.Session.SetInt32("CustomerId", user.ClientId);  // Usamos el ClientId
+                HttpContext.Session.SetInt32("IsAdmin", user.IsAdmin ? 1 : 0);  // Guardar si es admin
 
                 return RedirectToAction("Index", "Home");
             }
@@ -34,6 +35,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
                 return View();
             }
         }
+
         // GET: Register
         public IActionResult Register()
         {
@@ -62,7 +64,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
 
                     // Guardar en la sesión para autenticar automáticamente
                     HttpContext.Session.SetString("User", createdUser.Email);
-                    
+                    HttpContext.Session.SetInt32("CustomerId", createdUser.ClientId);  // Guardar CustomerId
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -81,6 +83,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
         {
             // Limpiar la sesión para cerrar sesión
             HttpContext.Session.Remove("User");
+            HttpContext.Session.Remove("CustomerId");  // Limpiar el CustomerId también
             return RedirectToAction("Login");  // Redirigir al login
         }
     }

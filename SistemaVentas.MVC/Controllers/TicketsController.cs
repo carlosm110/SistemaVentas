@@ -50,20 +50,44 @@ namespace SistemaVentas.MVC.Controllers
         // GET: Tickets/Create
         public IActionResult Create()
         {
+            // Obtener el CustomerId desde la sesión
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
+            // Si el usuario no está logueado, redirigir al login
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            // Crear el ticket y asignar el CustomerId
+            var ticket = new Ticket
+            {
+                CustomerId = customerId.Value  // Asignar el CustomerId al ticket
+            };
+
+            // Rellenar los otros ViewData con datos necesarios para los dropdowns
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
-            ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email");
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute");
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type");
-            return View();
+
+            return View(ticket);
         }
 
-        // POST: Tickets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TicketId,Price,Delivered,SeatId,CustomerId,CategoryId,RouteId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("TicketId,Price,Delivered,SeatId,CategoryId,RouteId")] Ticket ticket)
         {
+            // Obtener el CustomerId del usuario logueado desde la sesión
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
+            // Verificar que el CustomerId no sea null
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Auth");  // Redirigir al login si no está logueado
+            }
+
+            ticket.CustomerId = customerId.Value;  // Asignar el CustomerId al ticket
+
             if (ModelState.IsValid)
             {
                 _context.Add(ticket);
@@ -71,11 +95,12 @@ namespace SistemaVentas.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email", ticket.CustomerId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type", ticket.SeatId);
             return View(ticket);
         }
+
+
 
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
