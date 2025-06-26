@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SistemaVentas.API.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250625232105_v01")]
-    partial class v01
+    [Migration("20250626003944_xd")]
+    partial class xd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,9 @@ namespace SistemaVentas.API.Migrations
                     b.Property<string>("NameRoute")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.HasKey("RouteId");
 

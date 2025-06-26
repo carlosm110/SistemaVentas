@@ -11,6 +11,8 @@ namespace SistemaVentas.Model
         [Required]
         public string NameRoute { get; set; }
 
+        public double Price { get; set; }
+
         public List<Ticket>? Tickets { get; set; }
     }
 }

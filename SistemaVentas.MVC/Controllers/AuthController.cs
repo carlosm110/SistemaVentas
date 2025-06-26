@@ -26,7 +26,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
                 HttpContext.Session.SetString("User", username);
                 HttpContext.Session.SetInt32("CustomerId", user.ClientId);  // Usamos el ClientId
                 HttpContext.Session.SetString("CustomerEmail", user.Email);  // Guardamos el correo
-                HttpContext.Session.SetInt32("IsAdmin", user.IsAdmin ? 1 : 0);  // Guardar si es admin
+                HttpContext.Session.SetString("IsAdmin", user.IsAdmin ? "True" : "False");  // Guardar como "True" o "False"
 
                 return RedirectToAction("Index", "Home");
             }

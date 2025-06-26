@@ -29,6 +29,7 @@ namespace SistemaVentas.MVC.Controllers
                 return View("ClientDashboard");
             }
         }
+        
 
 
         public IActionResult Privacy()

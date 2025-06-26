@@ -63,6 +63,35 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<!-- Aquí añadimos la sección para mostrar los botones de descarga si hay tickets generados -->
+@{
+    var session = Context.Session;
+    const string sessionKey = "TicketNotifications";
+    var ticketIds = session.GetString(sessionKey);
+
+    var tickets = ticketIds != null
+        ? System.Text.Json.JsonSerializer.Deserialize<List<int>>(ticketIds)
+        : new List<int>();
+}
+
+@if (tickets.Any())
+{
+    <div class="alert alert-success p-2">
+        <h4>¡Ticket(s) generado(s) con éxito!</h4>
+        @foreach (var ticketId in tickets)
+        {
+            <a asp-action="DownloadPdf" asp-route-id="@ticketId" class="btn btn-primary m-1">
+                Descargar Ticket #@ticketId
+            </a>
+        }
+
+        @* Elimina la lista de tickets de la sesión para no volver a mostrar el botón en la próxima carga *@
+        @{
+            session.Remove(sessionKey);
+        }
+    </div>
+}
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -1,7 +1,13 @@
-using SistemaVentas.APIConsumer;
-using SistemaVentas.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SistemaVentas.APIConsumer;
+using SistemaVentas.Model;
+using SistemaVentas.MVC.Services.Business;
+using SistemaVentas.MVC.Services.Factories;
+using SistemaVentas.MVC.Services.Factories.SistemaVentas.MVC.Services.Factories;
+using SistemaVentas.MVC.Services.Observers;
+using SistemaVentas.MVC.Services.Strategies;
+using SistemaVentas.MVC.Services.Utilities;
 
 namespace SistemaVentas.MVC
 {
@@ -9,20 +15,43 @@ namespace SistemaVentas.MVC
     {
         public static void Main(string[] args)
         {
+            // Configuración de los endpoints de la API
             Crud<Seat>.EndPoint = "https://localhost:7269/api/Seats";
             Crud<Ticket>.EndPoint = "https://localhost:7269/api/Tickets";
             Crud<Category>.EndPoint = "https://localhost:7269/api/Categories";
             Crud<Model.Route>.EndPoint = "https://localhost:7269/api/Routes";
             Crud<Client>.EndPoint = "https://localhost:7269/api/Clients";
 
-
-
             var builder = WebApplication.CreateBuilder(args);
 
+            // Configuración de dependencias
+            builder.Services.AddScoped<IBoletoFactory, TicketFactory>(); // Registra TicketFactory como IBoletoFactory
+
+            // Configuración del DbContext para conexión con PostgreSQL
             builder.Services.AddDbContext<SistemaVentasDBContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("SistemaVentasDBContext") ?? throw new InvalidOperationException("Connection string 'SistemaVentasDBContext' not found.")));
 
-            // Agregar soporte para sesiones
+            // Registra el servicio TicketService como Scoped
+            builder.Services.AddScoped<TicketService>();
+
+            // Registra el generador de PDF
+            builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
+
+            // Registra HttpContextAccessor para acceder a la sesión
+            builder.Services.AddHttpContextAccessor();
+
+            // Registra las estrategias de precios
+            builder.Services.AddScoped<ChildPriceStrategy>();
+            builder.Services.AddScoped<AdultPriceStrategy>();
+            builder.Services.AddScoped<SeniorPriceStrategy>();
+
+            // Registra el PriceCalculator para que sea inyectado cuando sea necesario
+            builder.Services.AddScoped<PriceCalculator>();
+
+            // Registra el CustomerNotifier como scoped para ser usado en el servicio
+            builder.Services.AddScoped<CustomerNotifier>();
+
+            // Configuración de soporte para sesiones
             builder.Services.AddDistributedMemoryCache(); // Utiliza la memoria como caché
             builder.Services.AddSession(options =>
             {
@@ -31,16 +60,15 @@ namespace SistemaVentas.MVC
                 options.Cookie.IsEssential = true; // Hacer que la cookie sea esencial para el funcionamiento de la aplicación
             });
 
-            // Add services to the container.
+            // Agregar servicios para controladores con vistas
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configuración del pipeline de HTTP
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -49,15 +77,17 @@ namespace SistemaVentas.MVC
 
             app.UseRouting();
 
-            // Habilitar sesión
+            // Habilitar el uso de sesiones
             app.UseSession();
 
             app.UseAuthorization();
 
+            // Definir la ruta por defecto para el controlador y la acción
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Auth}/{action=Login}/{id?}");
 
+            // Ejecutar la aplicación
             app.Run();
         }
     }

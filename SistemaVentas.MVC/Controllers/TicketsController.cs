@@ -3,45 +3,54 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaVentas.Model;
 using Microsoft.AspNetCore.Http;
+using SistemaVentas.MVC.Services.Business;
+using SistemaVentas.MVC.Services.Strategies;
+using SistemaVentas.MVC.Services.Observers;
+using SistemaVentas.MVC.Services.Utilities;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace SistemaVentas.MVC.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly SistemaVentasDBContext _context;
+        private readonly IWebHostEnvironment _env;
+        private readonly TicketService _ticketService;
+        private readonly ChildPriceStrategy _childStrategy;
+        private readonly AdultPriceStrategy _adultStrategy;
+        private readonly SeniorPriceStrategy _seniorStrategy;
+        private readonly CustomerNotifier _notifier;
 
-        public TicketsController(SistemaVentasDBContext context)
+        public TicketsController(SistemaVentasDBContext context,
+                                 IWebHostEnvironment env,
+                                 TicketService ticketService,
+                                 ChildPriceStrategy childStrategy,
+                                 AdultPriceStrategy adultStrategy,
+                                 SeniorPriceStrategy seniorStrategy,
+                                 CustomerNotifier notifier)
         {
             _context = context;
+            _env = env;
+            _ticketService = ticketService;
+            _childStrategy = childStrategy;
+            _adultStrategy = adultStrategy;
+            _seniorStrategy = seniorStrategy;
+            _notifier = notifier;
+
+            // Registrar el observador (en este caso CustomerNotifier)
+            _ticketService.RegisterObserver(_notifier);
         }
 
-        // GET: Tickets/Index
-        public async Task<IActionResult> Index()
+        // GET: Tickets/DownloadPdf/5
+        [HttpGet]
+        public IActionResult DownloadPdf(int id)
         {
-            var sistemaVentasDBContext = _context.Tickets.Include(t => t.Category).Include(t => t.Customer).Include(t => t.Route).Include(t => t.Seat);
-            return View(await sistemaVentasDBContext.ToListAsync());
-        }
-
-        // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
+            var filePath = Path.Combine(_env.ContentRootPath, "wwwroot", "tickets", $"ticket_{id}.pdf");
+            if (!System.IO.File.Exists(filePath))
                 return NotFound();
-            }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.Category)
-                .Include(t => t.Customer)
-                .Include(t => t.Route)
-                .Include(t => t.Seat)
-                .FirstOrDefaultAsync(m => m.TicketId == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-
-            return View(ticket);
+            return PhysicalFile(filePath, "application/pdf", $"ticket_{id}.pdf");
         }
 
         // GET: Tickets/Create
@@ -92,16 +101,51 @@ namespace SistemaVentas.MVC.Controllers
 
             ticket.CustomerId = customerId.Value;  // Asignar el CustomerId al ticket
 
-            if (ModelState.IsValid)
+            ticket.Route = await _context.Routes.FindAsync(ticket.RouteId);
+            ticket.Category = await _context.Categories.FindAsync(ticket.CategoryId);
+            ticket.Seat = await _context.Seats.FindAsync(ticket.SeatId);
+
+            if (ticket.Route == null || ticket.Category == null || ticket.Seat == null)
             {
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Invalid Route, Category, or Seat selection.");
+                return View(ticket);
             }
 
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
-            ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type", ticket.SeatId);
+            // Seleccionar la estrategia de precio
+            IPriceStrategy strategy = _adultStrategy;  // Esto puede ser dinámico, basado en la categoría o preferencia
+
+            // Crear el ticket usando el servicio
+            var createdTicket = _ticketService.CreateTicket(ticket.Route.NameRoute, ticket.Category.Name, ticket.Seat.Type, strategy, new Client { ClientId = customerId.Value, Email = HttpContext.Session.GetString("CustomerEmail") });
+
+            return RedirectToAction("Index"); // Redirigir a la vista de lista o mostrar una confirmación
+        }
+
+        // GET: Tickets/Index
+        public async Task<IActionResult> Index()
+        {
+            var sistemaVentasDBContext = _context.Tickets.Include(t => t.Category).Include(t => t.Customer).Include(t => t.Route).Include(t => t.Seat);
+            return View(await sistemaVentasDBContext.ToListAsync());
+        }
+
+        // GET: Tickets/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ticket = await _context.Tickets
+                .Include(t => t.Category)
+                .Include(t => t.Customer)
+                .Include(t => t.Route)
+                .Include(t => t.Seat)
+                .FirstOrDefaultAsync(m => m.TicketId == id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
             return View(ticket);
         }
 
@@ -127,7 +171,6 @@ namespace SistemaVentas.MVC.Controllers
         }
 
         // POST: Tickets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TicketId,Price,Delivered,SeatId,CustomerId,CategoryId,RouteId")] Ticket ticket)

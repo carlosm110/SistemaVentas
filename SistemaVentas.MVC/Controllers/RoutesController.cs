@@ -53,7 +53,7 @@ namespace SistemaVentas.MVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RouteId,NameRoute")] Model.Route route)
+        public async Task<IActionResult> Create([Bind("RouteId,NameRoute,Price")] Model.Route route)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace SistemaVentas.MVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RouteId,NameRoute")] Model.Route route)
+        public async Task<IActionResult> Edit(int id, [Bind("RouteId,NameRoute,Price")] Model.Route route)
         {
             if (id != route.RouteId)
             {

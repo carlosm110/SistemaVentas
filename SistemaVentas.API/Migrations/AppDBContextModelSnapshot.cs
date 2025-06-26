@@ -77,6 +77,9 @@ namespace SistemaVentas.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
                     b.HasKey("RouteId");
 
                     b.ToTable("Routes");
