@@ -33,10 +33,11 @@
                 <select asp-for="SeatId" class="form-control" asp-items="ViewBag.SeatId"></select>
             </div>
 
-            <!-- CustomerId (Solo lectura) -->
+            <!-- Customer (Solo lectura) -->
             <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <input asp-for="CustomerId" class="form-control" readonly />
+                <label class="control-label">Customer</label>
+                <input type="text" class="form-control" value="@ViewData["UserEmail"]" readonly />
+                <input asp-for="CustomerId" type="hidden" value="@Model.CustomerId" />
             </div>
 
             <!-- Categoría -->

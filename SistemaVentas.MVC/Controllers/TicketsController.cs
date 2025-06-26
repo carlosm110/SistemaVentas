@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaVentas.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace SistemaVentas.MVC.Controllers
 {
@@ -18,7 +15,7 @@ namespace SistemaVentas.MVC.Controllers
             _context = context;
         }
 
-        // GET: Tickets
+        // GET: Tickets/Index
         public async Task<IActionResult> Index()
         {
             var sistemaVentasDBContext = _context.Tickets.Include(t => t.Category).Include(t => t.Customer).Include(t => t.Route).Include(t => t.Seat);
@@ -59,20 +56,27 @@ namespace SistemaVentas.MVC.Controllers
                 return RedirectToAction("Login", "Auth");
             }
 
+            // Obtener el correo del usuario logueado desde la sesión
+            var userEmail = HttpContext.Session.GetString("CustomerEmail");
+
             // Crear el ticket y asignar el CustomerId
             var ticket = new Ticket
             {
                 CustomerId = customerId.Value  // Asignar el CustomerId al ticket
             };
 
-            // Rellenar los otros ViewData con datos necesarios para los dropdowns
+            // Rellenar los ViewData con los datos necesarios para los dropdowns
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute");
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type");
 
+            // Pasar el correo del usuario logueado a la vista
+            ViewData["UserEmail"] = userEmail;
+
             return View(ticket);
         }
 
+        // POST: Tickets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TicketId,Price,Delivered,SeatId,CategoryId,RouteId")] Ticket ticket)
@@ -94,13 +98,12 @@ namespace SistemaVentas.MVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type", ticket.SeatId);
             return View(ticket);
         }
-
-
 
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -115,6 +118,7 @@ namespace SistemaVentas.MVC.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email", ticket.CustomerId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
@@ -124,7 +128,6 @@ namespace SistemaVentas.MVC.Controllers
 
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TicketId,Price,Delivered,SeatId,CustomerId,CategoryId,RouteId")] Ticket ticket)
@@ -154,6 +157,7 @@ namespace SistemaVentas.MVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
             ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email", ticket.CustomerId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);

@@ -22,9 +22,10 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
 
             if (user != null)
             {
-                // GUARDAR LA SESIÓN CON EL CustomerId
+                // GUARDAR LA SESIÓN CON EL CustomerId Y CORREO
                 HttpContext.Session.SetString("User", username);
                 HttpContext.Session.SetInt32("CustomerId", user.ClientId);  // Usamos el ClientId
+                HttpContext.Session.SetString("CustomerEmail", user.Email);  // Guardamos el correo
                 HttpContext.Session.SetInt32("IsAdmin", user.IsAdmin ? 1 : 0);  // Guardar si es admin
 
                 return RedirectToAction("Index", "Home");
@@ -65,6 +66,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
                     // Guardar en la sesión para autenticar automáticamente
                     HttpContext.Session.SetString("User", createdUser.Email);
                     HttpContext.Session.SetInt32("CustomerId", createdUser.ClientId);  // Guardar CustomerId
+                    HttpContext.Session.SetString("CustomerEmail", createdUser.Email);  // Guardar correo del cliente
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -84,6 +86,7 @@ namespace GestionMantenimientoFlotas.MVC.Controllers
             // Limpiar la sesión para cerrar sesión
             HttpContext.Session.Remove("User");
             HttpContext.Session.Remove("CustomerId");  // Limpiar el CustomerId también
+            HttpContext.Session.Remove("CustomerEmail");  // Limpiar el correo del cliente
             return RedirectToAction("Login");  // Redirigir al login
         }
     }
