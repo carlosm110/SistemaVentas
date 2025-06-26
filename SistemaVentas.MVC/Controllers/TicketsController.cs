@@ -53,6 +53,7 @@ namespace SistemaVentas.MVC.Controllers
             return PhysicalFile(filePath, "application/pdf", $"ticket_{id}.pdf");
         }
 
+
         // GET: Tickets/Create
         public IActionResult Create()
         {
@@ -235,7 +236,7 @@ namespace SistemaVentas.MVC.Controllers
                         return NotFound();
                     }
 
-                    // Actualizar las propiedades del ticket
+                    // Actualizar las propiedades del ticket con los nuevos valores
                     existingTicket.SeatId = ticket.SeatId;
                     existingTicket.CategoryId = ticket.CategoryId;
                     existingTicket.RouteId = ticket.RouteId;
@@ -248,6 +249,7 @@ namespace SistemaVentas.MVC.Controllers
 
                     // Seleccionar la estrategia de precio según la categoría
                     IPriceStrategy strategy;
+
                     if (selectedCategory.Name == "Niño")
                     {
                         strategy = _childStrategy;
@@ -264,12 +266,15 @@ namespace SistemaVentas.MVC.Controllers
                     // Calcular el nuevo precio usando la estrategia seleccionada
                     var newPrice = _ticketService.CalculatePrice(selectedRoute.NameRoute, selectedCategory.Name, selectedSeat.Type, strategy);
 
-                    // Asignar el nuevo precio
+                    // Asignar el nuevo precio al ticket
                     existingTicket.Price = newPrice;
 
                     // Guardar los cambios en la base de datos
                     _context.Update(existingTicket);
                     await _context.SaveChangesAsync();
+
+                    // Generar el PDF con los datos actualizados
+                    _notifier.Update(existingTicket);  // Notificar al observador para generar el PDF con los datos actualizados
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -292,6 +297,7 @@ namespace SistemaVentas.MVC.Controllers
 
             return View(ticket);
         }
+
 
 
 

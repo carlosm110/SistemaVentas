@@ -59,7 +59,9 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.TicketId" class="btn btn-primary btn-sm">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.TicketId" class="btn btn-info btn-sm">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.TicketId" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.TicketId" class="btn btn-danger btn-sm">Delete</a> |
+                    <!-- Botón de descarga del PDF -->
+                    <a asp-action="DownloadPdf" asp-route-id="@item.TicketId" class="btn btn-success btn-sm">Download PDF</a>
                 </td>
             </tr>
         }
