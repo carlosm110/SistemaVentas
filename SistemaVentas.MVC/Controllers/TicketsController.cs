@@ -88,7 +88,7 @@ namespace SistemaVentas.MVC.Controllers
         // POST: Tickets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TicketId,Price,Delivered,SeatId,CategoryId,RouteId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("TicketId,Delivered,SeatId,CategoryId,RouteId")] Ticket ticket)
         {
             // Obtener el CustomerId del usuario logueado desde la sesión
             var customerId = HttpContext.Session.GetInt32("CustomerId");
@@ -111,14 +111,35 @@ namespace SistemaVentas.MVC.Controllers
                 return View(ticket);
             }
 
-            // Seleccionar la estrategia de precio
-            IPriceStrategy strategy = _adultStrategy;  // Esto puede ser dinámico, basado en la categoría o preferencia
+            // Seleccionar la estrategia de precio, en este caso puede ser dinámica basada en la categoría o el tipo de asiento
+            IPriceStrategy strategy;
+            if (ticket.Category.Name == "Niño") 
+            {
+                strategy = _childStrategy;
+            }
+            else if (ticket.Category.Name == "Tercera Edad")
+            {
+                strategy = _seniorStrategy;
+            }
+            else 
+            {
+                strategy = _adultStrategy;
+            }
+
+            // Calcular el precio y asignarlo al ticket
+            var price = _ticketService.CalculatePrice(ticket.Route.NameRoute, ticket.Category.Name, ticket.Seat.Type, strategy);
+            ticket.Price = price;
 
             // Crear el ticket usando el servicio
-            var createdTicket = _ticketService.CreateTicket(ticket.Route.NameRoute, ticket.Category.Name, ticket.Seat.Type, strategy, new Client { ClientId = customerId.Value, Email = HttpContext.Session.GetString("CustomerEmail") });
+            var createdTicket = _ticketService.CreateTicket(ticket.Route.NameRoute, ticket.Category.Name, ticket.Seat.Type, strategy, HttpContext.Session);
+
+            // Guardar el ticket en la base de datos
+            //_context.Tickets.Add(createdTicket);  // Añadir el ticket al contexto de la base de datos
+            await _context.SaveChangesAsync();    // Guardar los cambios en la base de datos
 
             return RedirectToAction("Index"); // Redirigir a la vista de lista o mostrar una confirmación
         }
+
 
         // GET: Tickets/Index
         public async Task<IActionResult> Index()

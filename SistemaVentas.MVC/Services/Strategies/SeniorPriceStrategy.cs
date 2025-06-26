@@ -21,8 +21,19 @@ namespace SistemaVentas.MVC.Services.Strategies
             if (route == null)
                 throw new ArgumentException($"Ruta «{routeName}» no encontrada.");
 
-            // Descuento 20%
-            return route.Price * 0.8;
+            // Precio base de la ruta
+            double price = route.Price;
+
+            // Descuento del 20% para tercera edad
+            price *= 0.8;
+
+            // Aumento por asiento VIP si aplica
+            if (seatType == "VIP")
+            {
+                price *= 1.5;  // Aumento por asiento VIP
+            }
+
+            return price;
         }
     }
 }

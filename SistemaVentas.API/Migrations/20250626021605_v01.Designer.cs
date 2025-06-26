@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SistemaVentas.API.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250626003944_xd")]
-    partial class xd
+    [Migration("20250626021605_v01")]
+    partial class v01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

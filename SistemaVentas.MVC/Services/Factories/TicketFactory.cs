@@ -5,6 +5,13 @@ namespace SistemaVentas.MVC.Services.Factories
 {
     public class TicketFactory : IBoletoFactory
     {
+        private readonly SistemaVentasDBContext _context;
+
+        public TicketFactory(SistemaVentasDBContext context)
+        {
+            _context = context;
+        }
+
         public Ticket CreateTicket(
             string routeName,
             string categoryName,
@@ -12,13 +19,22 @@ namespace SistemaVentas.MVC.Services.Factories
             double price,
             Client customer)
         {
-            // Here we would typically retrieve the Route, Category, and Seat from a database
-            // and assign them to the Ticket.
+            // Consultar la base de datos para obtener la Route, Category y Seat ya existentes
+            var route = _context.Routes.FirstOrDefault(r => r.NameRoute == routeName);
+            var category = _context.Categories.FirstOrDefault(c => c.Name == categoryName);
+            var seat = _context.Seats.FirstOrDefault(s => s.Type == seatType);
+
+            if (route == null || category == null || seat == null)
+            {
+                throw new InvalidOperationException("Route, Category or Seat not found in the database.");
+            }
+
+            // Crear el ticket usando las instancias obtenidas de la base de datos
             return new Ticket
             {
-                Route = new Model.Route { NameRoute = routeName },
-                Category = new Category { Name = categoryName },
-                Seat = new Seat { Type = seatType },
+                Route = route,
+                Category = category,
+                Seat = seat,
                 Price = price,
                 Customer = customer
             };

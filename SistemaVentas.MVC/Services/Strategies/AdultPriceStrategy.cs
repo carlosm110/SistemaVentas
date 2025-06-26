@@ -21,8 +21,22 @@ namespace SistemaVentas.MVC.Services.Strategies
             if (route == null)
                 throw new ArgumentException($"Ruta «{routeName}» no encontrada.");
 
-            // Precio normal
-            return route.Price;
+            // Precio base de la ruta
+            double price = route.Price;
+
+            // Aumento por asiento VIP si aplica
+            if (seatType == "VIP")
+            {
+                price *= 1.5;  // 50% más caro para asiento VIP
+            }
+
+            // Lógica para categoría (adulto)
+            if (categoryName == "Adulto")
+            {
+                // Se queda con el precio base para adultos
+            }
+
+            return price;
         }
     }
 }
