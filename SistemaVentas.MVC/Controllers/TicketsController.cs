@@ -265,7 +265,8 @@ namespace SistemaVentas.MVC.Controllers
 
                     // Calcular el nuevo precio usando la estrategia seleccionada
                     var newPrice = _ticketService.CalculatePrice(selectedRoute.NameRoute, selectedCategory.Name, selectedSeat.Type, strategy);
-
+                    var customer = await _context.Client.FindAsync(ticket.CustomerId);
+                    existingTicket.Customer = customer;
                     // Asignar el nuevo precio al ticket
                     existingTicket.Price = newPrice;
 
