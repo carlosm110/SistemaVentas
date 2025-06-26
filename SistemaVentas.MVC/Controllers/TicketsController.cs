@@ -178,18 +178,36 @@ namespace SistemaVentas.MVC.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
+            var ticket = await _context.Tickets
+                .Include(t => t.Category)
+                .Include(t => t.Route)
+                .Include(t => t.Seat)
+                .Include(t => t.Customer)  // Asegúrate de incluir al Customer
+                .FirstOrDefaultAsync(t => t.TicketId == id);
+
             if (ticket == null)
             {
                 return NotFound();
             }
 
+            // Calcular el precio automáticamente con la estrategia seleccionada
+            var strategy = _adultStrategy;  // Esto se puede hacer dinámico según la categoría, por ejemplo.
+            var price = _ticketService.CalculatePrice(ticket.Route.NameRoute, ticket.Category.Name, ticket.Seat.Type, strategy);
+
+            // Pasar el precio calculado como readonly a la vista
+            ViewData["Price"] = price;  // Asignamos el precio calculado al ViewData
+
+            // Pasar el email del customer a la vista
+            ViewData["CustomerEmail"] = ticket.Customer.Email;
+
+            // Rellenar los ViewData con los datos necesarios para los dropdowns
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email", ticket.CustomerId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type", ticket.SeatId);
+
             return View(ticket);
         }
+
 
         // POST: Tickets/Edit/5
         [HttpPost]
@@ -205,7 +223,52 @@ namespace SistemaVentas.MVC.Controllers
             {
                 try
                 {
-                    _context.Update(ticket);
+                    // Obtener el ticket existente para actualizarlo
+                    var existingTicket = await _context.Tickets
+                        .Include(t => t.Route)
+                        .Include(t => t.Category)
+                        .Include(t => t.Seat)
+                        .FirstOrDefaultAsync(t => t.TicketId == id);
+
+                    if (existingTicket == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Actualizar las propiedades del ticket
+                    existingTicket.SeatId = ticket.SeatId;
+                    existingTicket.CategoryId = ticket.CategoryId;
+                    existingTicket.RouteId = ticket.RouteId;
+                    existingTicket.Delivered = ticket.Delivered;
+
+                    // Obtener las entidades seleccionadas para recalcular el precio
+                    var selectedRoute = await _context.Routes.FindAsync(ticket.RouteId);
+                    var selectedCategory = await _context.Categories.FindAsync(ticket.CategoryId);
+                    var selectedSeat = await _context.Seats.FindAsync(ticket.SeatId);
+
+                    // Seleccionar la estrategia de precio según la categoría
+                    IPriceStrategy strategy;
+                    if (selectedCategory.Name == "Niño")
+                    {
+                        strategy = _childStrategy;
+                    }
+                    else if (selectedCategory.Name == "Tercera Edad")
+                    {
+                        strategy = _seniorStrategy;
+                    }
+                    else
+                    {
+                        strategy = _adultStrategy;
+                    }
+
+                    // Calcular el nuevo precio usando la estrategia seleccionada
+                    var newPrice = _ticketService.CalculatePrice(selectedRoute.NameRoute, selectedCategory.Name, selectedSeat.Type, strategy);
+
+                    // Asignar el nuevo precio
+                    existingTicket.Price = newPrice;
+
+                    // Guardar los cambios en la base de datos
+                    _context.Update(existingTicket);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -222,12 +285,15 @@ namespace SistemaVentas.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // Si el modelo no es válido, recargar los datos para mostrar nuevamente el formulario
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", ticket.CategoryId);
-            ViewData["CustomerId"] = new SelectList(_context.Client, "ClientId", "Email", ticket.CustomerId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "NameRoute", ticket.RouteId);
             ViewData["SeatId"] = new SelectList(_context.Seats, "SeatId", "Type", ticket.SeatId);
+
             return View(ticket);
         }
+
+
 
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
